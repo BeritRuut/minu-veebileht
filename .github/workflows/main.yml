@@ -15,9 +15,9 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh/
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST_SERVER_IP }} >> ~/.ssh/known_hosts
       - name: Copy files to server
         run: |
-          rsync -vrm  ./* ${{ secrets.SSH_LOGIN_CREDS }}:/data01/virt145949/domeenid/www.ruudus.eu/htdocs
+          rsync -vrm -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" \
+            ./* ${{ secrets.SSH_LOGIN_CREDS }}:/data01/virt145949/domeenid/www.ruudus.eu/htdocs
